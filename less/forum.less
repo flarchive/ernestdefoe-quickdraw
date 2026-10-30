@@ -1,0 +1,521 @@
+// Quickdraw: a floating action button on discussion pages, opening a fan of
+// round buttons or a panel. Every colour comes from Flarum's CSS properties,
+// so it follows the theme, the dark mode and the primary colour.
+
+.Quickdraw {
+  --qd-size: 56px;
+  --qd-item: 46px;
+  --qd-gap: 16px;
+
+  position: fixed;
+  bottom: calc(var(--qd-gap) + env(safe-area-inset-bottom, 0px) + var(--qd-lift, 0px));
+  right: calc(var(--qd-gap) + env(safe-area-inset-right, 0px));
+  z-index: calc(~"var(--zindex-composer, 1020) - 1");
+  width: var(--qd-size);
+  height: var(--qd-size);
+  transition: bottom 0.2s ease;
+
+  &.is-hidden {
+    display: none;
+  }
+}
+.Quickdraw--left {
+  right: auto;
+  left: calc(var(--qd-gap) + env(safe-area-inset-left, 0px));
+}
+@media @tablet-up {
+  .Quickdraw--phoneOnly {
+    display: none;
+  }
+}
+
+// A soft wash from the corner keeps the menu readable over any post.
+.Quickdraw-scrim {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  background: radial-gradient(
+    circle at calc(~"100% - 44px") calc(~"100% - 44px - var(--qd-lift, 0px)"),
+    color-mix(in srgb, var(--body-bg) 94%, transparent) 0,
+    color-mix(in srgb, var(--body-bg) 80%, transparent) 260px,
+    color-mix(in srgb, var(--body-bg) 0%, transparent) 460px
+  );
+
+  .Quickdraw--left & {
+    background: radial-gradient(
+      circle at 44px calc(~"100% - 44px - var(--qd-lift, 0px)"),
+      color-mix(in srgb, var(--body-bg) 94%, transparent) 0,
+      color-mix(in srgb, var(--body-bg) 80%, transparent) 260px,
+      color-mix(in srgb, var(--body-bg) 0%, transparent) 460px
+    );
+  }
+  .Quickdraw--panel & {
+    background: color-mix(in srgb, var(--body-bg) 55%, transparent);
+  }
+  .Quickdraw.is-open & {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.Quickdraw .Quickdraw-fab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--qd-size);
+  height: var(--qd-size);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-color);
+  font-size: 20px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow:
+    0 10px 24px -8px color-mix(in srgb, var(--primary-color) 70%, transparent),
+    0 2px 6px var(--shadow-color);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+
+  &:hover {
+    background: var(--button-primary-bg-hover);
+    transform: translateY(-2px);
+  }
+  &:active {
+    transform: scale(0.95);
+  }
+  &:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--primary-color) 45%, transparent);
+    outline-offset: 3px;
+  }
+}
+.Quickdraw-fabIcon {
+  position: absolute;
+  transition:
+    transform 0.25s ease,
+    opacity 0.2s ease;
+}
+.Quickdraw-fabIcon--close {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.6);
+}
+.Quickdraw.is-open {
+  .Quickdraw-fabIcon--open {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.6);
+  }
+  .Quickdraw-fabIcon--close {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.Quickdraw .Quickdraw-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--alert-error-bg);
+  color: var(--alert-error-color);
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1;
+  box-shadow: 0 0 0 2px var(--body-bg);
+}
+.Quickdraw-fab > .Quickdraw-badge,
+.Quickdraw-fanItem > .Quickdraw-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+}
+
+// Every menu button starts from the same reset, so a theme's button rules
+// can't leak in.
+.Quickdraw .Quickdraw-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  border: 0;
+  background: none;
+  color: var(--text-color);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Fan
+
+.Quickdraw-fan {
+  position: absolute;
+  inset: 0;
+}
+.Quickdraw .Quickdraw-fanItem {
+  position: absolute;
+  right: calc(~"(var(--qd-size) - var(--qd-item)) / 2");
+  bottom: calc(~"(var(--qd-size) - var(--qd-item)) / 2");
+  justify-content: center;
+  width: var(--qd-item);
+  height: var(--qd-item);
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--control-bg);
+  background: var(--body-bg);
+  color: var(--text-color);
+  font-size: 17px;
+  box-shadow:
+    0 8px 18px -6px var(--shadow-color),
+    0 1px 3px var(--shadow-color);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(0, 0) scale(0.3);
+  transition:
+    transform 0.2s ease,
+    opacity 0.15s ease,
+    visibility 0s linear 0.2s,
+    background 0.15s ease;
+
+
+  .Quickdraw-itemIcon {
+    display: flex;
+    transition: transform 0.15s ease;
+  }
+  &:hover,
+  &:focus-visible {
+    // Each button is its own layer (it's transformed), so the one showing
+    // its label comes to the front, over its neighbours.
+    z-index: 1;
+    background: var(--control-bg);
+    color: var(--control-color);
+
+    .Quickdraw-itemIcon {
+      transform: scale(1.12);
+    }
+  }
+
+  // The label is a tooltip above the button.
+  .Quickdraw-itemLabel {
+    position: absolute;
+    bottom: calc(~"100% + 8px");
+    left: 50%;
+    padding: 5px 9px;
+    border-radius: 6px;
+    background: var(--tooltip-bg);
+    color: var(--tooltip-color);
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1.2;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, 4px);
+    transition:
+      opacity 0.15s ease,
+      transform 0.15s ease;
+  }
+  &:hover .Quickdraw-itemLabel,
+  &:focus-visible .Quickdraw-itemLabel {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  // These are capped narrow enough to stay centred under an edge button too.
+  .Quickdraw .Quickdraw-fanItem--edge .Quickdraw-itemLabel {
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, 0);
+  }
+}
+.Quickdraw .Quickdraw-fanItem.Quickdraw-item--primary {
+  border-color: transparent;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-color);
+
+  &:hover,
+  &:focus-visible {
+    background: var(--button-primary-bg-hover);
+    color: var(--button-primary-color);
+  }
+}
+.Quickdraw .Quickdraw-fanItem.Quickdraw-item--moderate {
+  border-color: transparent;
+  background: var(--control-bg);
+  color: var(--control-color);
+}
+.Quickdraw .Quickdraw-fanItem.Quickdraw-item--danger {
+  color: var(--control-danger-color);
+  background: var(--control-danger-bg);
+  border-color: transparent;
+}
+
+// Open, and the mirror image for the left corner. Outside the block above:
+// nested there, `&` would repeat `.Quickdraw` and never match.
+.Quickdraw.is-open .Quickdraw-fanItem {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(calc(~"var(--qd-x) * -1"), calc(~"var(--qd-y) * -1"));
+  transition:
+    transform 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.2) calc(~"var(--qd-i) * 22ms"),
+    opacity 0.2s ease calc(~"var(--qd-i) * 22ms"),
+    visibility 0s,
+    background 0.15s ease;
+}
+.Quickdraw--left .Quickdraw-fan .Quickdraw-fanItem {
+  right: auto;
+  left: calc(~"(var(--qd-size) - var(--qd-item)) / 2");
+}
+.Quickdraw--left.is-open .Quickdraw-fanItem {
+  transform: translate(var(--qd-x), calc(~"var(--qd-y) * -1"));
+}
+
+// Labels of buttons at the screen edge line up with that edge instead of
+// centring, which would run off the screen.
+.Quickdraw .Quickdraw-fanItem--edge .Quickdraw-itemLabel {
+  left: auto;
+  right: 0;
+  transform: translate(0, 4px);
+}
+.Quickdraw .Quickdraw-fanItem--edge:hover .Quickdraw-itemLabel,
+.Quickdraw .Quickdraw-fanItem--edge:focus-visible .Quickdraw-itemLabel {
+  transform: none;
+}
+.Quickdraw--left .Quickdraw-fanItem--edge .Quickdraw-itemLabel {
+  right: auto;
+  left: 0;
+}
+
+// Touch screens have no hover: every label shows, small, under its button.
+@media (hover: none) {
+  .Quickdraw .Quickdraw-fanItem .Quickdraw-itemLabel {
+    top: calc(~"100% + 3px");
+    bottom: auto;
+    max-width: 84px;
+    padding: 2px 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: var(--body-bg);
+    color: var(--text-color);
+    font-size: 11px;
+    box-shadow: 0 1px 3px var(--shadow-color);
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  // These are capped narrow enough to stay centred under an edge button too.
+  .Quickdraw .Quickdraw-fanItem--edge .Quickdraw-itemLabel {
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, 0);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Panel
+
+.Quickdraw-panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(~"var(--qd-size) + 12px");
+  width: 320px;
+  max-width: calc(~"100vw - 32px");
+  // Never taller than the room above the button, wherever it has been lifted to.
+  max-height: calc(~"100vh - var(--qd-size) - var(--qd-gap) - var(--qd-lift, 0px) - env(safe-area-inset-bottom, 0px) - 28px");
+  max-height: calc(~"100dvh - var(--qd-size) - var(--qd-gap) - var(--qd-lift, 0px) - env(safe-area-inset-bottom, 0px) - 28px");
+  overflow-y: auto;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid var(--control-bg);
+  background: var(--body-bg);
+  color: var(--text-color);
+  box-shadow:
+    0 24px 48px -16px var(--shadow-color),
+    0 4px 12px var(--shadow-color);
+  transform-origin: bottom right;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px) scale(0.96);
+  transition:
+    transform 0.2s ease,
+    opacity 0.15s ease,
+    visibility 0s linear 0.2s;
+
+  .Quickdraw--left & {
+    right: auto;
+    left: 0;
+    transform-origin: bottom left;
+  }
+  .Quickdraw.is-open & {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.1),
+      opacity 0.2s ease,
+      visibility 0s;
+  }
+}
+.Quickdraw-panelHead {
+  padding: 2px 4px 12px;
+}
+.Quickdraw .Quickdraw-panelTitle {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--heading-color, var(--text-color));
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1.35;
+}
+.Quickdraw .Quickdraw-panelMeta {
+  margin-top: 2px;
+  color: var(--muted-color);
+  font-size: 12px;
+}
+.Quickdraw-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.Quickdraw .Quickdraw-tile {
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 7px;
+  min-width: 0;
+  padding: 11px 4px 9px;
+  border-radius: 14px;
+  background: var(--control-bg);
+  color: var(--control-color);
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+
+  .Quickdraw-itemIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--body-bg);
+    color: var(--text-color);
+    font-size: 15px;
+  }
+  .Quickdraw-itemLabel {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 11px;
+    line-height: 1.25;
+  }
+  .Quickdraw-badge {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+  }
+  &:hover {
+    background: var(--control-bg-shaded);
+  }
+  &:active {
+    transform: scale(0.96);
+  }
+}
+.Quickdraw .Quickdraw-tile.Quickdraw-item--primary {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-color);
+
+  .Quickdraw-itemIcon {
+    background: color-mix(in srgb, var(--button-primary-color) 20%, transparent);
+    color: var(--button-primary-color);
+  }
+  &:hover {
+    background: var(--button-primary-bg-hover);
+  }
+}
+.Quickdraw-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 10px;
+}
+.Quickdraw .Quickdraw-row {
+  gap: 12px;
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: 10px;
+  color: var(--text-color);
+  font-size: 14px;
+
+  .Quickdraw-itemIcon {
+    width: 18px;
+    color: var(--muted-color);
+    text-align: center;
+  }
+  .Quickdraw-itemLabel {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &:hover,
+  &:focus-visible {
+    background: var(--control-bg);
+  }
+}
+.Quickdraw .Quickdraw-row.Quickdraw-item--danger {
+  color: var(--control-danger-color);
+
+  .Quickdraw-itemIcon {
+    color: var(--control-danger-color);
+  }
+  &:hover,
+  &:focus-visible {
+    background: var(--control-danger-bg);
+  }
+}
+.Quickdraw-section {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--control-bg);
+
+  .Quickdraw-rows {
+    margin-top: 4px;
+  }
+}
+.Quickdraw .Quickdraw-sectionLabel {
+  padding: 0 10px;
+  color: var(--muted-color);
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .Quickdraw,
+  .Quickdraw *,
+  .Quickdraw-scrim {
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+}
