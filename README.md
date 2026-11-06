@@ -2,13 +2,19 @@
 
 > **Read-only archive of released versions of ernestdefoe/quickdraw.** Not for installation: use [Packagist](https://packagist.org/packages/ernestdefoe/quickdraw) or the [upstream repository](https://github.com/ernestdefoe/quickdraw).
 
-**0** versions archived · Latest: [`1.0.6`](https://github.com/flarchive/ernestdefoe-quickdraw/tree/archive/v1.0.6) · License: `MIT` · Flarum: `^2.0`
+**7** versions archived · Latest: [`1.0.6`](https://github.com/flarchive/ernestdefoe-quickdraw/tree/archive/v1.0.6) · License: `MIT` · Flarum: `^2.0`
 
 ## Archived Versions
 
 | Version | Released | Flarum | Source |
 |---|---|---|---|
-| — | — | — | — |
+| `1.0.0` | 2026-10-30 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-quickdraw/tree/archive/v1.0.0) |
+| `1.0.1` | 2026-10-30 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-quickdraw/tree/archive/v1.0.1) |
+| `1.0.2` | 2026-10-30 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-quickdraw/tree/archive/v1.0.2) |
+| `1.0.3` | 2026-10-30 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-quickdraw/tree/archive/v1.0.3) |
+| `1.0.4` | 2026-10-30 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-quickdraw/tree/archive/v1.0.4) |
+| `1.0.5` | 2026-10-31 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-quickdraw/tree/archive/v1.0.5) |
+| `1.0.6` | 2026-11-06 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-quickdraw/tree/archive/v1.0.6) |
 
 Catalog entry: [packages/ernestdefoe-quickdraw.json](https://github.com/flarchive/archive-index/blob/main/packages/ernestdefoe-quickdraw.json)
 
