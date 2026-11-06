@@ -1,0 +1,59 @@
+{
+    "name": "ernestdefoe/quickdraw",
+    "description": "Quickdraw — a floating action button for Flarum discussion pages. Reply, follow, jump to where you left off, copy or share the link, and moderate, from a fan or a panel within thumb reach.",
+    "keywords": [
+        "flarum",
+        "flarum-extension",
+        "floating",
+        "menu",
+        "mobile",
+        "discussion",
+        "moderation"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ernest Defoe",
+            "email": "ernestdefoe@gmail.com"
+        }
+    ],
+    "homepage": "https://github.com/ernestdefoe/quickdraw",
+    "support": {
+        "issues": "https://github.com/ernestdefoe/quickdraw/issues",
+        "source": "https://github.com/ernestdefoe/quickdraw"
+    },
+    "funding": [
+        {
+            "type": "other",
+            "url": "https://buymeacoffee.com/ernestdefoe"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "flarum/core": "^2.0"
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Quickdraw",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-bolt",
+                "backgroundColor": "#4d698e",
+                "color": "#fff"
+            },
+            "optional-dependencies": [
+                "flarum/flags",
+                "flarum/lock",
+                "flarum/sticky",
+                "flarum/subscriptions",
+                "flarum/tags"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "beta",
+    "prefer-stable": true
+}
